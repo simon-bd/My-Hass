@@ -43,7 +43,7 @@ blueprint:
       description: The climate entity that is controlled by the window sensor.
       selector:
         entity:
-          domain: climate
+          domain: humidifier
           multiple: false
     open_action:
       name: Additional Open Action (Optional)
