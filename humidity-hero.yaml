@@ -70,20 +70,3 @@ action:
           - service: humidifier.turn_off
             target:
               entity_id: !input humidifier_target
-          - choose:
-              - conditions: "{{ open_action is defined and open_action|length > 0 }}"
-                sequence: !input open_action
-          - wait_for_trigger:
-              - platform: state
-                entity_id: !input window_entity
-                to: "off"
-            continue_on_timeout: false
-          - delay: !input minimum_close_time
-          - choose:
-              - conditions: "{{ close_action is defined and close_action|length > 0 }}"
-                sequence: !input close_action
-          - service: climate.set_hvac_mode
-            data:
-              hvac_mode: fan_only
-            target:
-              entity_id: !input humidifier_target
