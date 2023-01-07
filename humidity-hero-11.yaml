@@ -1,0 +1,72 @@
+blueprint:
+  name: Window open, climate off after a defined time
+  description:
+    "Climate device like heating and cooling devices (if active) are turned
+    off and go back to the previous set stage after the windows is closed again. You can also define a time before the
+    climate device turns back to its previous state. Now it supports several heating modes and different vendors like Tado. The supported
+    HAVC modes are: automatic, auto, heat, heat_cool and off. If you need more please
+    let me know. Happy automating!"
+  domain: automation
+  input:
+    window_entity:
+      name: Window Sensor
+      description:
+        The window sensor that controls the climate entity. If you have
+        more window sensors please make a group sensor.
+      selector:
+        entity:
+          domain: binary_sensor
+          # device_class: window
+          multiple: false
+    minimum_open_time:
+      name: Miniumum open time
+      description: Time in seconds to wait until the automation is triggered
+      default: 12
+      selector:
+        number:
+          min: 0.0
+          max: 120.0
+          unit_of_measurement: seconds
+          mode: slider
+          step: 1.0
+    minimum_close_time:
+      name: Miniumum close time
+      description: Time in seconds to wait until the climate entity is turned on again
+      default: 12
+      selector:
+        number:
+          min: 0.0
+          max: 300.0
+          unit_of_measurement: seconds
+          mode: slider
+          step: 1.0
+    humidifier_target:
+      name: Climate Device
+      description: The climate entity that is controlled by the window sensor.
+      selector:
+        entity:
+          domain: humidifier
+          multiple: false
+
+mode: single
+trigger:
+  - platform: state
+    entity_id: !input window_entity
+    to: "on"
+    for: !input minimum_open_time
+condition:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: !input humidifier_target
+        state: "off"
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input humidifier_target
+            state: "on"
+        sequence:
+          - service: humidifier.turn_off
+            target:
+              entity_id: !input humidifier_target
