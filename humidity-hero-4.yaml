@@ -3,7 +3,7 @@ blueprint:
   description: Turn off the hygrostat when humidity falls below a certain threshold or windows are open.
   domain: automation
 
-input:
+inputs:
   switch:
     description: The entity ID of the hygrostat switch.
     type: string
