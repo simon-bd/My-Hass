@@ -68,9 +68,15 @@ condition:
         entity_id: !input humidifier_device
         state: "off"
 action:
+  - service: scene.create
+    data:
+      scene_id: humidifier_snapshot
+      snapshot_entities: !input humidifier_device
   - service: humidifier.turn_off
     target:
       entity_id: !input humidifier_device
+    data:
+      hvac_mode: "off"
   - wait_for_trigger:
       - platform: state
         entity_id: !input doors_windows
@@ -78,3 +84,4 @@ action:
         to: "off"
         for: !input resume_delay
     continue_on_timeout: false
+  - scene: scene.humidifier_snapshot
