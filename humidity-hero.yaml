@@ -3,16 +3,21 @@ blueprint:
   description: >
     # Humidity Hero
 
-    Pauses the humidifier when windows or doors are open. Once the windows or doors are closed, the humidifier will resume its previous state.
+    The Humidity Hero blueprint is an automation that turns a humidifier or dehumidifier on or off based on the state of windows and doors.
 
-    This automation can be useful for preventing excess humidity in a room when it is being ventilated, such as when opening a window on a rainy day. The pause and resume delays can be customized to suit your preferences.
+    ## Features
+
+    - Automatically turns off the humidifier or dehumidifier when windows or doors are open, to save energy.
+    - Automatically turns on the humidifier or dehumidifier when all windows and doors are closed, to maintain a comfortable humidity level in the home.
+    - Customizable pause and resume delays.
+    - Helps to reduce energy costs and create a healthier living environment.
 
     ## Inputs
 
-     - **humidifier_device**: Climate entity used for climate control.
-     - **doors_windows**: Group of entities that will activate automation. (Assumes 'on' means 'open')
-     - **pause_delay**: Time to wait before pausing the humidifier.
-     - **resume_delay**: Time to wait before resuming the humidifier.
+    - **humidifier_device**: Climate entity used for climate control.
+    - **doors_windows**: Group of entities that will activate automation. (Assumes 'on' means 'open')
+    - **pause_delay**: Time to wait before pausing the humidifier.
+    - **resume_delay**: Time to wait before resuming the humidifier.
 
   domain: automation
 
