@@ -1,12 +1,25 @@
 blueprint:
-  name: HVAC Pause
-  description: Pauses HVAC when windows/doors open; resumes last state once closed
+  name: Humidity Hero
+  description: >
+    # Humidity Hero
+
+    Pauses the humidifier when windows or doors are open. Once the windows or doors are closed, the humidifier will resume its previous state.
+
+    This automation can be useful for preventing excess humidity in a room when it is being ventilated, such as when opening a window on a rainy day. The pause and resume delays can be customized to suit your preferences.
+
+    ## Inputs
+
+     - **humidifier_device**: Climate entity used for climate control.
+     - **doors_windows**: Group of entities that will activate automation. (Assumes 'on' means 'open')
+     - **pause_delay**: Time to wait before pausing the humidifier.
+     - **resume_delay**: Time to wait before resuming the humidifier.
+
   domain: automation
 
   input:
     humidifier_device:
-      description: Climate entity used for climate control.
-      name: Climate Device
+      description: Humidifier/Dehumidifier entity used for climate control.
+      name: Humidifier/Dehumidifier Device
       selector:
         entity:
           domain: humidifier
@@ -21,7 +34,7 @@ blueprint:
             - binary_sensor
 
     pause_delay:
-      description: Time to wait before pausing the HVAC system.
+      description: Time to wait before pausing the Humidifier/Dehumidifier.
       name: Pause Delay
       default:
         hours: 00
@@ -31,7 +44,7 @@ blueprint:
         duration:
 
     resume_delay:
-      description: Time to wait before resuming the HVAC system.
+      description: Time to wait before resuming the Humidifier/Dehumidifier.
       name: Resume Delay
       default:
         hours: 00
