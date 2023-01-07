@@ -36,5 +36,6 @@ inputs:
     description: The humidity threshold at which the hygrostat should be turned off.
     type: integer
 
+
 variables:
   below: 30
