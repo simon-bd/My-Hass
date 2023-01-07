@@ -1,6 +1,7 @@
 blueprint:
   name: Hygrostat
   description: Turn off the hygrostat when humidity falls below a certain threshold or windows are open.
+  domain: automation
 
 triggers:
   - event: state_changed
