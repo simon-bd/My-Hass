@@ -1,0 +1,25 @@
+blueprint:
+  name: Hygrostat
+  description: Turn off the hygrostat when humidity falls below a certain threshold or windows are open.
+
+triggers:
+  - event: state_changed
+    entity_id: sensor.humidity
+    to: '{{ trigger.below }}'
+  - event: state_changed
+    entity_id: binary_sensor.window
+    to: 'on'
+
+actions:
+  - service: switch.turn_off
+    entity_id: switch.hygrostat
+
+conditions:
+  - condition: template
+    value_template: '{{ states.sensor.humidity.state | int < trigger.below }}'
+  - condition: state
+    entity_id: binary_sensor.window
+    state: 'on'
+
+variables:
+  below: 30
