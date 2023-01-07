@@ -7,17 +7,17 @@ blueprint:
 
     ## Features
 
-    - Automatically turns off the humidifier or dehumidifier when windows or doors are open, to save energy.
-    - Automatically turns on the humidifier or dehumidifier when all windows and doors are closed, to maintain a comfortable humidity level in the home.
-    - Customizable pause and resume delays.
-    - Helps to reduce energy costs and create a healthier living environment.
+     - Automatically turns off the humidifier or dehumidifier when windows or doors are open, to save energy.
+     - Automatically turns on the humidifier or dehumidifier when all windows and doors are closed, to maintain a comfortable humidity level in the home.
+     - Customizable pause and resume delays.
+     - Helps to reduce energy costs and create a healthier living environment.
 
     ## Inputs
 
-    - **humidifier_device**: Climate entity used for climate control.
-    - **doors_windows**: Group of entities that will activate automation. (Assumes 'on' means 'open')
-    - **pause_delay**: Time to wait before pausing the humidifier.
-    - **resume_delay**: Time to wait before resuming the humidifier.
+     - **humidifier_device**: Climate entity used for climate control.
+     - **doors_windows**: Group of entities that will activate automation. (Assumes 'on' means 'open')
+     - **pause_delay**: Time to wait before pausing the humidifier.
+     - **resume_delay**: Time to wait before resuming the humidifier.
 
   domain: automation
 
