@@ -61,12 +61,6 @@ condition:
         entity_id: !input humidifier_target
         state: "off"
 action:
-  - choose:
-      - conditions:
-          - condition: state
-            entity_id: !input humidifier_target
-            state: "on"
-        sequence:
-          - service: humidifier.turn_off
-            target:
-              entity_id: !input humidifier_target
+  - service: humidifier.turn_off
+    target:
+      entity_id: !input humidifier_target
