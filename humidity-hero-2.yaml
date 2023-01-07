@@ -19,22 +19,22 @@ input:
 
 triggers:
   - event: state_changed
-    entity_id: '{{ inputs.sensor }}'
+    entity_id: '{{ input.sensor }}'
     to: '{{ trigger.below }}'
   - event: state_changed
-    entity_id: '{{ inputs.binary_sensor }}'
+    entity_id: '{{ input.binary_sensor }}'
     to: 'on'
 
 actions:
   - service: switch.turn_off
-    entity_id: '{{ inputs.switch }}'
+    entity_id: '{{ input.switch }}'
 
 conditions:
   - condition: template
-    value_template: '{{ states[inputs.sensor].state | int < trigger.below }}'
+    value_template: '{{ states[input.sensor].state | int < trigger.below }}'
   - condition: state
-    entity_id: '{{ inputs.binary_sensor }}'
+    entity_id: '{{ input.binary_sensor }}'
     state: 'on'
 
 variables:
-  below: '{{ inputs.below }}'
+  below: '{{ input.below }}'
