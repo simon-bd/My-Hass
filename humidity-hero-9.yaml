@@ -64,13 +64,14 @@ blueprint:
           min: 0
           max: 100
           unit_of_measurement: \%
-  condition: |
-    {{ (automation_blocker | default(true) | bool)
-       and (automation_blocker_boolean | default(true) | bool)
-       and (shutoff_blocker | default(true) | bool)
-       is (shutoff_blocker_boolean | default(true) | bool) }}
-  action:
-    service: climate.set_operation_mode
-    data:
-      entity_id: "{{ hygrostat_entity }}"
-      operation_mode: "off"
+ condition: |
+  {{ (automation_blocker | default(true) | bool)
+     and (automation_blocker_boolean | default(true) | bool)
+     and (shutoff_blocker | default(true) | bool)
+     == (shutoff_blocker_boolean | default(true) | bool) }}
+ action:
+  service: climate.set_operation_mode
+  data:
+    entity_id: "{{ hygrostat_entity }}"
+    operation_mode: "off"
+
