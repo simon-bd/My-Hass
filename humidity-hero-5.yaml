@@ -5,17 +5,25 @@ blueprint:
 
 inputs:
   switch:
+    name: Hygrostat Switch
     description: The entity ID of the hygrostat switch.
-    type: string
+    selector:
+      entity:
   sensor:
+    name: Humidity Sensor
     description: The entity ID of the humidity sensor.
-    type: string
+    selector:
+      entity:
   binary_sensor:
+    name: Window Binary Sensor
     description: The entity ID of the window binary sensor.
-    type: string
+    selector:
+      entity:
   below:
+    name: Humidity Threshold
     description: The humidity threshold at which the hygrostat should be turned off.
-    type: integer
+    selector:
+      number:
 
 triggers:
   - event: state_changed
