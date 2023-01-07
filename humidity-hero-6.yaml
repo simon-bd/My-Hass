@@ -1,0 +1,66 @@
+blueprint:
+  name: Hygrostat Shutoff
+  description: >
+    This automation turns off a hygrostat when the windows are open or the humidity falls below a specified threshold. It has several optional features that allow users to customize the automation's behavior based on their needs. 
+
+    ## Capabilities
+    - Triggers on window open or low humidity
+    - Option to only run if certain entities are in a desired state
+    - Option to set a "shutoff blocker" to prevent the automation from running when a certain boolean is active
+    - Inputs for humidity sensor entity, window entity, and hygrostat entity
+
+  domain: automation
+  input:
+    humidity_sensor:
+      name: Humidity Sensor
+      description: Humidity sensor to monitor humidity level
+      selector:
+        entity:
+          domain: sensor
+          device_class: humidity
+    window_entity:
+      name: Window
+      description: Window or a group with windows to monitor
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: window
+    hygrostat_entity:
+      name: Hygrostat
+      description: Hygrostat to turn off
+      selector:
+        entity:
+          domain: climate
+    automation_blocker:
+      name: Automation Blocker (Optional)
+      description: Only run if this boolean is in desired state (see next input)
+      default:
+      selector:
+        entity:
+    automation_blocker_boolean:
+      name: Automation Blocker Chooser (Optional)
+      description: Desired state of automation blocker, choose on for on and off for off
+      default: false
+      selector:
+        boolean: 
+    shutoff_blocker:
+      name: Shutoff Blocker (Optional)
+      description: Shutoff sequence is not run if this boolean is in desired state (see next input)
+      default:
+      selector:
+        entity:
+    shutoff_blocker_boolean:
+      name: Shutoff Blocker Chooser (Optional)
+      description: Desired state of shutoff blocker, choose on for on and off for off
+      default: false
+      selector:
+        boolean:         
+    humidity_threshold:
+      name: Humidity Threshold (Optional)
+      description: Humidity level below which the hygrostat will be turned off
+      default: 50
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: %
