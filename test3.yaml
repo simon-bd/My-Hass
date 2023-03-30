@@ -67,11 +67,24 @@ condition:
   - condition: or
     conditions:
       - condition: not
-        entity_id: !input use_lux_meter
+        entity: !input use_lux_meter
       - condition: numeric_state
         entity_id: !input lux_meter
         below: "{{ state_attr('input_number.plant_light_luminance', 'value') }}"
 
 action:
-  - service: switch.turn_on
-    entity_id: !input plant_light
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input plant_light
+            state: 'off'
+        sequence:
+          - service: switch.turn_on
+            entity_id: !input plant_light
+      - conditions:
+          - condition: state
+            entity_id: !input plant_light
+            state: 'on'
+        sequence:
+          - service: switch.turn_off
+            entity_id: !input plant_light
