@@ -59,9 +59,8 @@ condition:
       - condition: state
         entity_id: sun.sun
         state: 'above_horizon'
-      - condition: state
-        entity_id: !input plant_light_mode
-        state: 'Always On'
+      - condition: template
+        value_template: "{{ is_state('input_select.plant_light_mode', 'Always On') }}"
   - condition: state
     entity_id: !input nobody_home
     state: 'on'
