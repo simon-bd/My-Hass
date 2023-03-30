@@ -1,0 +1,29 @@
+alias: Plant Light - Sun Up or Always On and Nobody Home
+description: 'Turn on plant light when sun is up or always on and nobody is home'
+trigger:
+  - platform: state
+    entity_id: sun.sun
+  - platform: state
+    entity_id: binary_sensor.nobody_home
+condition:
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: sun.sun
+        state: 'above_horizon'
+      - condition: state
+        entity_id: input_select.plant_light_mode
+        state: 'Always On'
+  - condition: state
+    entity_id: binary_sensor.nobody_home
+    state: 'on'
+  - condition: or
+    conditions:
+      - condition: not
+        entity_id: input_boolean.use_lux_meter
+      - condition: numeric_state
+        entity_id: sensor.lux_meter
+        below: "{{ state_attr('input_number.plant_light_luminance', 'value') }}"
+action:
+  - service: switch.turn_on
+    entity_id: switch.plant_light
