@@ -67,7 +67,10 @@ condition:
   - condition: or
     conditions:
       - condition: not
-        entity: !input use_lux_meter
+        conditions:
+          - condition: state
+            entity_id: !input use_lux_meter
+            state: 'on'
       - condition: numeric_state
         entity_id: !input lux_meter
         below: "{{ state_attr('input_number.plant_light_luminance', 'value') }}"
