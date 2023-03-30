@@ -1,0 +1,34 @@
+blueprint:
+  name: Light Limiter
+  description: Introducing the Light Limiter - the clever automation that keeps your lights in check by limiting their on-time to a reasonable duration. With Light Limiter, you'll never have to worry about leaving your lights on for too long and wasting energy. It's like having a personal timekeeper for your lights!
+  domain: automation
+  input:
+    garage_lights:
+      name: Garage Lights
+      description: The entity ID of the garage lights to control
+      selector:
+        entity:
+          domain: light
+    timer_duration:
+      name: Timer Duration
+      description: The duration in minutes for the timer to run
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 60
+          step: 1
+          mode: slider
+  source_url: https://www.example.com/blueprints/garage_lights_timer.yaml
+
+mode: single
+trigger:
+  platform: state
+  entity_id: !input garage_lights
+  to: "on"
+condition: []
+action:
+  - delay:
+      minutes: !input timer_duration
+  - service: light.turn_off
+    entity_id: !input garage_lights
