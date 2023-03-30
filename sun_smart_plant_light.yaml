@@ -5,11 +5,10 @@ blueprint:
   input:
     nobody_home:
       name: Nobody Home
-      description: Binary sensor indicating whether nobody is home
+      description: Input boolean indicating whether nobody is home
       selector:
         entity:
-          domain: binary_sensor
-          integration: "input_boolean" # Modified to allow input helpers
+          domain: input_boolean
     plant_light:
       name: Plant Light
       description: Switch entity for the plant light
@@ -74,9 +73,3 @@ condition:
 action:
   - service: switch.turn_on
     entity_id: !input plant_light
-  - service: switch.turn_off
-    entity_id: !input plant_light
-    # Add a condition to only turn the light off if it's currently on
-    condition: state
-    entity_id: !input plant_light
-    state: 'on'
