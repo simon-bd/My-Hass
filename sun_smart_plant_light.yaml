@@ -1,10 +1,55 @@
-alias: Plant Light - Sun Up or Always On and Nobody Home
-description: 'Turn on plant light when sun is up or always on and nobody is home'
+blueprint:
+  name: Sun-Smart Plant Light
+  description: Turn on plant light when sun is up or always on and nobody is home
+  domain: automation
+  input:
+    nobody_home:
+      name: Nobody Home
+      description: Binary sensor indicating whether nobody is home
+      selector:
+        entity:
+          domain: binary_sensor
+    plant_light:
+      name: Plant Light
+      description: Switch entity for the plant light
+      selector:
+        entity:
+          domain: switch
+    plant_light_mode:
+      name: Plant Light Mode
+      description: Select the mode for the plant light
+      selector:
+        select:
+    use_lux_meter:
+      name: Use Lux Meter
+      description: Enable or disable the use of a lux meter to control the plant light
+      selector:
+        boolean:
+    lux_meter:
+      name: Lux Meter
+      description: Sensor entity for the lux meter
+      selector:
+        entity:
+          domain: sensor
+    plant_light_luminance:
+      name: Plant Light Luminance
+      description: Set the desired luminance level for the plant light
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 100
+          unit_of_measurement: lx
+
+mode: single
+max_exceeded: silent
+
 trigger:
   - platform: state
     entity_id: sun.sun
   - platform: state
-    entity_id: binary_sensor.nobody_home
+    entity_id: !input nobody_home
+
 condition:
   - condition: or
     conditions:
@@ -12,18 +57,19 @@ condition:
         entity_id: sun.sun
         state: 'above_horizon'
       - condition: state
-        entity_id: input_select.plant_light_mode
+        entity_id: !input plant_light_mode
         state: 'Always On'
   - condition: state
-    entity_id: binary_sensor.nobody_home
+    entity_id: !input nobody_home
     state: 'on'
   - condition: or
     conditions:
       - condition: not
-        entity_id: input_boolean.use_lux_meter
+        entity_id: !input use_lux_meter
       - condition: numeric_state
-        entity_id: sensor.lux_meter
+        entity_id: !input lux_meter
         below: "{{ state_attr('input_number.plant_light_luminance', 'value') }}"
+
 action:
   - service: switch.turn_on
-    entity_id: switch.plant_light
+    entity_id: !input plant_light
