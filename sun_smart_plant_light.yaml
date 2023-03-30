@@ -9,6 +9,7 @@ blueprint:
       selector:
         entity:
           domain: binary_sensor
+          integration: "input_boolean" # Modified to allow input helpers
     plant_light:
       name: Plant Light
       description: Switch entity for the plant light
@@ -73,3 +74,9 @@ condition:
 action:
   - service: switch.turn_on
     entity_id: !input plant_light
+  - service: switch.turn_off
+    entity_id: !input plant_light
+    # Add a condition to only turn the light off if it's currently on
+    condition: state
+    entity_id: !input plant_light
+    state: 'on'
