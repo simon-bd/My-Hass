@@ -20,6 +20,9 @@ blueprint:
       description: Select the mode for the plant light
       selector:
         select:
+          options:
+            - Always On
+            - When Sun is Up
     use_lux_meter:
       name: Use Lux Meter
       description: Enable or disable the use of a lux meter to control the plant light
