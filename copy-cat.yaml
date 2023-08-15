@@ -1,0 +1,40 @@
+blueprint:
+  name: Copycat Crew
+  description: Synchronize the state of followers with the leader.
+  domain: automation
+  input:
+    leader:
+      name: Leader
+      description: Select the leader entity.
+      selector:
+        entity:
+          domain:
+            - switch
+            - light
+            - sensor
+            - input_select
+            - input_boolean  # Allow selection of input_boolean entities
+    followers:
+      name: Followers
+      description: Select the follower entities.
+      selector:
+        entity:
+          domain:
+            - switch
+            - light
+            - sensor
+            - input_select
+            - input_boolean  # Allow selection of input_boolean entities
+          multiple: true
+
+mode: single
+max_exceeded: silent
+
+trigger:
+  - platform: state
+    entity_id: !input leader
+
+action:
+  - service_template: "{{ trigger.to_state.state }}"
+    target:
+      entity_id: !input followers
