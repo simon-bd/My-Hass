@@ -13,7 +13,7 @@ blueprint:
             - light
             - sensor
             - input_select
-            - input_boolean  # Allow selection of input_boolean entities
+            - input_boolean
     followers:
       name: Followers
       description: Select the follower entities.
@@ -24,7 +24,7 @@ blueprint:
             - light
             - sensor
             - input_select
-            - input_boolean  # Allow selection of input_boolean entities
+            - input_boolean
           multiple: true
 
 mode: single
@@ -35,6 +35,11 @@ trigger:
     entity_id: !input leader
 
 action:
-  - service_template: "{{ trigger.to_state.state }}"
+  - service_template: >
+      {% if trigger.to_state.state == 'on' %}
+        homeassistant.turn_on
+      {% else %}
+        homeassistant.turn_off
+      {% endif %}
     target:
       entity_id: !input followers
