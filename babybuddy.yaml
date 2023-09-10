@@ -1,0 +1,10 @@
+  babybuddy:
+    image: lscr.io/linuxserver/babybuddy
+    container_name: babybuddy
+    environment:
+      - TZ=Europe/Copenhagen
+    volumes:
+      - /opt/babybuddy:/config
+    ports:
+      - 8000:8000
+    restart: unless-stopped
