@@ -1,0 +1,282 @@
+blueprint:
+  name: SMAL – Smart Motion-Activated Lighting
+  description: >
+    # Introduction
+     
+    The "Smart Motion-Activated Lighting" blueprint creates an automation that controls devices when motion is detected. It has several optional features that allow users to customize the automation's behavior based on their needs. 
+
+    ## Optional Features
+    Some examples of how the optional features can be used include:
+     - Defining different devices for different times of day (e.g., bathroom lights in the morning and ceiling lights during the day)
+     - Activating devices during a specified time frame (e.g., bathroom lights from 8:00 AM to 12:00 PM)
+     - Only running the automation if certain conditions are met (e.g., only running if the house is unoccupied)
+     - Setting a "no motion blocker" to prevent the automation from running when a certain condition is met (e.g., a "vacation" condition when the user is away)
+     
+    ## Capabilities
+     - Triggers on motion (can be triggered by anything that switches between "on" and "off")
+     - Wait time for turning off lights
+     - Optional feature to only run if certain conditions are met
+     - Optional feature to check sun elevation
+     - Optional feature to define different devices for different times of day
+     - Inputs for motion sensor entity, light
+
+  domain: automation
+  source_url: https://gist.github.com/networkingcat/a1876d7e706e07c8bdcf974113940fb8
+
+  input:
+    motion_entity:
+      name: Motion Sensor
+      description: Motion Sensor or a group with Motion Sensors (But can be anything switching between "on" and "off")
+      selector:
+        entity:
+    
+    light_target:
+      name: Light
+      selector:
+        target:
+          entity:
+            domain: light
+
+    illuminance_sensor:
+      name: Illuminance sensor (Optional)
+      description: This sensor will be used to determine the illumination.
+      default:
+      selector:
+        entity:
+          domain: sensor
+          device_class: illuminance
+
+    illuminance_cutoff:
+      name: Illuminance cutoff value (Optional)
+      description: This input_number will be used to compare to the current illumination to determine if it is low.
+      default:
+      selector:
+        entity:
+          domain: input_number
+
+    no_motion_wait:
+      name: Wait time
+      description: Time to leave the light on after the last motion is detected.
+      default: 120
+      selector:
+        number:
+          min: 0
+          max: 3600
+          unit_of_measurement: seconds
+
+    automation_blocker:
+      name: Automation Blocker (Optional)
+      description: Only run if this condition is met (see next input)
+      default:
+      selector:
+        entity:
+
+    automation_blocker_condition:
+      name: Automation Blocker Condition (Optional)
+      description: Desired condition for the automation blocker, choose "true" for enabled and "false" for disabled.
+      default: false
+      selector:
+        boolean:
+
+    no_motion_blocker:
+      name: No Motion Blocker (Optional)
+      description: No motion sequence is not run if this condition is met (see next input)
+      default:
+      selector:
+        entity:
+
+    no_motion_blocker_condition:
+      name: No Motion Blocker Condition (Optional)
+      description: Desired condition of no motion blocker, choose "true" for enabled and "false" for disabled.
+      default: false
+      selector:
+        boolean:
+
+    elevation_check:
+      name: Sun elevation check (Optional)
+      description: This is the angle between the sun and the horizon. Negative values mean the sun is BELOW the horizon.
+      default: none
+      selector:
+        number:
+          min: -90
+          max: 90
+          unit_of_measurement: degrees
+
+    device_morning:
+      name: Device for Morning (Optional)
+      default:
+      selector:
+        target:
+          entity:
+            domain: light
+
+    time_device_morning:
+      name: Time for Morning Device (Optional)
+      description: Time from which on the morning device will be activated if motion is detected.
+      default: "00:00:00"
+      selector:
+        time:
+
+    device_day:
+      name: Device for Day (Optional)
+      default:
+      selector:
+        target:
+          entity:
+            domain: light
+
+    time_device_day:
+      name: Time for Day Device (Optional)
+      description: Time from which on the day device will be activated if motion is detected.
+      default: "08:00:00"
+      selector:
+        time:
+
+    device_evening:
+      name: Device for Evening (Optional)
+      default:
+      selector:
+        target:
+          entity:
+            domain: light
+
+    time_device_evening:
+      name: Time for Evening Device (Optional)
+      description: Time from which on the evening device will be activated if motion is detected.
+      default: "21:00:00"
+      selector:
+        time:
+
+    device_night:
+      name: Device for Night (Optional)
+      default:
+      selector:
+        target:
+          entity:
+            domain: light
+
+    time_device_night:
+      name: Time for Night Device (Optional)
+      description: Time from which on the night device will be activated if motion is detected.
+      default: "23:00:00"
+      selector:
+        time:
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+  - platform: state
+    entity_id: !input motion_entity
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id: !input motion_entity
+    from: "on"
+    to: "off"
+    for: !input no_motion_wait
+
+condition:
+  - condition: or
+    conditions:
+      - "{{ automation_blocker == none }}"
+      - "{{ automation_blocker_condition }}"
+      - "{{ not automation_blocker_condition }}"
+  - condition: template
+    value_template: "{{ (elevation_check == none) or (state_attr('sun.sun','elevation') <= elevation_check | float(90)) }}"
+
+action:
+  - choose:
+      - conditions:
+          - "{{ trigger.to_state.state == 'on' }}"
+          - condition: template
+            value_template: "{{ (illuminance_sensor == none) or (illuminance_cutoff == none) or (states[illuminance_sensor].state | int < states[illuminance_cutoff].state | int) }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - "{{ device_morning }}"
+                  - condition: time
+                    after: !input time_device_morning
+                    before: !input time_device_day
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_morning
+              - conditions:
+                  - "{{ device_day }}"
+                  - condition: time
+                    after: !input time_device_day
+                    before: !input time_device_evening
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_day
+              - conditions:
+                  - "{{ device_evening }}"
+                  - condition: time
+                    after: !input time_device_evening
+                    before: !input time_device_night
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_evening
+              - conditions:
+                  - "{{ device_night }}"
+                  - condition: time
+                    after: !input time_device_night
+                    before: !input time_device_morning
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_night
+              - default:
+                  - service: light.turn_on
+                    target: !input light_target
+      - conditions:
+          - "{{ trigger.to_state.state == 'off' }}"
+          - condition: or
+            conditions:
+              - "{{ no_motion_blocker == none }}"
+              - "{{ no_motion_blocker_condition }}"
+              - "{{ not no_motion_blocker_condition }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - "{{ device_morning }}"
+                  - condition: time
+                    after: !input time_device_morning
+                    before: !input time_device_day
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_morning
+              - conditions:
+                  - "{{ device_day }}"
+                  - condition: time
+                    after: !input time_device_day
+                    before: !input time_device_evening
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_day
+              - conditions:
+                  - "{{ device_evening }}"
+                  - condition: time
+                    after: !input time_device_evening
+                    before: !input time_device_night
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_evening
+              - conditions:
+                  - "{{ device_night }}"
+                  - condition: time
+                    after: !input time_device_night
+                    before: !input time_device_morning
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input device_night
+              - default:
+                  - service: light.turn_off
+                    target: !input light_target
