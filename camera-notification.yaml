@@ -19,7 +19,6 @@ blueprint:
       selector:
           entity:
             domain: input_boolean
-            name: noise_sensor
 
     camera:
       name: Camera
@@ -103,7 +102,3 @@ action:
   - service: input_boolean.turn_on
     target:
       entity_id: !input noise_sensor
-
-  - service: navigate
-    target:
-      entity_id: !input notify_device
