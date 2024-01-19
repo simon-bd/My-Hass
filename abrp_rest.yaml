@@ -1,0 +1,99 @@
+
+rest_command:
+  abrp:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "soc": {{ states('sensor.battery') | default(0) }},
+        "power": {{ states('sensor.zoe_charge_power') | default(0) }},
+        "lat": {{ state_attr('device_tracker.location', 'latitude') | default(0) }},
+        "lon": {{ state_attr('device_tracker.location', 'longitude') | default(0) }},
+        "is_charging": {{ 'true' if is_state('binary_sensor.charging', 'on') else 'false' }},
+        "ext_temp": {{
+          states('sensor.home_realfeel_temperature') if states('sensor.home_realfeel_temperature') != 'unavailable'
+          else states('sensor.openweathermap_temperature') if states('sensor.openweathermap_temperature') != 'unknown'
+          else 0
+        }},
+        "batt_temp": {{ states('sensor.battery_temperature') | default(states('sensor.home_realfeel_temperature') | default(0)) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_telemetry:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "soc": {{ states('sensor.battery') | default(0) }},
+        "power": {{ states('sensor.zoe_charge_power') | default(0) }},
+        "is_charging": {{ 'true' if is_state('binary_sensor.charging', 'on') else 'false' }},
+        "ext_temp": {{
+          states('sensor.home_realfeel_temperature') if states('sensor.home_realfeel_temperature') != 'unavailable'
+          else states('sensor.openweathermap_temperature') if states('sensor.openweathermap_temperature') != 'unknown'
+          else 0
+        }},
+        "batt_temp": {{ states('sensor.battery_temperature') | default(states('sensor.home_realfeel_temperature') | default(0)) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_soc:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "soc": {{ states('sensor.battery') | default(0) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_power:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "power": {{ states('sensor.zoe_charge_power') | default(0) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_location:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "lat": {{ state_attr('device_tracker.location', 'latitude') | default(0) }},
+        "lon": {{ state_attr('device_tracker.location', 'longitude') | default(0) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_charging:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "is_charging": {{ 'true' if is_state('binary_sensor.charging', 'on') else 'false' }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+  abrp_temperatures:
+    url: >
+      http://api.iternio.com/1/tlm/send?api_key={{ states('sensor.iternio_api_key') }}&token={{ states('sensor.abrp_api_key') }}&tlm={
+        "utc": {{ utcnow().strftime('%s') }},
+        "ext_temp": {{
+          states('sensor.home_realfeel_temperature') if states('sensor.home_realfeel_temperature') != 'unavailable'
+          else states('sensor.openweathermap_temperature') if states('sensor.openweathermap_temperature') != 'unknown'
+          else 0
+        }},
+        "batt_temp": {{ states('sensor.battery_temperature') | default(states('sensor.home_realfeel_temperature') | default(0)) }}
+      }
+    method: POST
+    headers:
+      content_type: "application/x-www-form-urlencoded; charset=utf-8"
+
+
+
+
