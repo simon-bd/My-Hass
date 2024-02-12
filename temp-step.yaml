@@ -35,4 +35,4 @@ action:
           data:
             temperature: "{{ state_attr(climate_entity, 'temperature') + step_temp }}"
         - delay: 
-            seconds: 1
+            milliseconds: 1000
