@@ -1,0 +1,38 @@
+blueprint:
+  name: Incremental Temperature Control
+  description: Incrementally adjust temperature from current temperature to target temperature.
+
+  domain: automation
+  input:
+    climate_entity:
+      name: Climate Entity
+      description: The climate device to control.
+      selector:
+        entity:
+          domain: climate
+
+mode: single
+
+trigger:
+  platform: state
+  entity_id: !input 'climate_entity'
+  attribute: current_temperature
+
+variables:
+  target_temp: !input 'climate_entity'
+  current_temp: "{{ state_attr(climate_entity, 'current_temperature') }}"
+  step_temp: 1
+
+action:
+  - while:
+      condition:
+        condition: template
+        value_template: "{{ state_attr(climate_entity, 'temperature') != target_temp }}"
+      sequence:
+        - service: climate.set_temperature
+          target:
+            entity_id: !input 'climate_entity'
+          data:
+            temperature: "{{ state_attr(climate_entity, 'temperature') + step_temp }}"
+        - delay: 
+            seconds: 1
