@@ -1,6 +1,6 @@
 blueprint:
   name: Incremental Temperature Control
-  description: Incrementally adjust temperature from current temperature to target temperature.
+  description: 'Automatically adjust temperature incrementally from current temperature to target temperature.'
 
   domain: automation
   input:
@@ -11,28 +11,26 @@ blueprint:
         entity:
           domain: climate
 
-mode: single
+mode: restart
 
 trigger:
   platform: state
   entity_id: !input 'climate_entity'
-  attribute: current_temperature
-
+condition: []
 variables:
-  target_temp: !input 'climate_entity'
-  current_temp: "{{ state_attr(climate_entity, 'current_temperature') }}"
+  target_temp: "{{ state_attr(trigger.entity_id, 'temperature') }}"
+  current_temp: "{{ trigger.to_state.attributes.current_temperature }}"
   step_temp: 1
 
 action:
-  - while:
-      condition:
-        condition: template
-        value_template: "{{ state_attr(climate_entity, 'temperature') != target_temp }}"
+  - repeat:
+      while:
+        - condition: template
+          value_template: "{{ state_attr(trigger.entity_id, 'temperature') != target_temp }}"
       sequence:
         - service: climate.set_temperature
           target:
             entity_id: !input 'climate_entity'
           data:
-            temperature: "{{ state_attr(climate_entity, 'temperature') + step_temp }}"
-        - delay: 
-            milliseconds: 1000
+            temperature: "{{ state_attr(trigger.entity_id, 'temperature') + step_temp }}"
+        - delay: '00:00:01'
