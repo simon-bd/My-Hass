@@ -1,6 +1,6 @@
 
 blueprint:
-  name: ZHA - Tuya 4-Button Scene Switch
+  name: Z2M - Tuya 4-Button Scene Switch
   description: Automate your Tuya 4-Button Scene Switch using z2m events.
   domain: automation
   input:
@@ -87,7 +87,7 @@ mode: restart
 max_exceeded: silent
 trigger:
 - platform: event
-  event_type: zha_event
+  event_type: z2m_event
   event_data:
     device_id: !input 'tuya_4button_scene_switch'
 action:
